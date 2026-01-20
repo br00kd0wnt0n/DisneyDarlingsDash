@@ -18,14 +18,14 @@ export function Header({
       <div className="max-w-[1800px] mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
           {/* Logo */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <img
               src="/darlings_Logo.png"
               alt="Disney Darlings"
               className="h-12 w-auto"
             />
-            <div className="border-l border-gray-200 pl-3">
-              <p className="text-sm font-medium text-gray-600">Sales Forecast</p>
+            <div className="border-l border-gray-200 pl-4">
+              <h1 className="text-xl font-bold text-primary-pink">Sales Forecast Dashboard</h1>
               <p className="text-xs text-gray-400">EMEA Launch 2026</p>
             </div>
           </div>
