@@ -131,6 +131,12 @@ function App() {
             {!state.isPresentationMode && (
               <AIAssessment
                 channelMix={state.channelMix}
+                metrics={{
+                  impressions: metrics.impressions,
+                  salesLow: metrics.displaySales.low,
+                  salesHigh: metrics.displaySales.high,
+                  roas: metrics.displayRoas.mid
+                }}
                 onApplySuggestions={setChannelMix}
               />
             )}

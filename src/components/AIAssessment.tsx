@@ -1,10 +1,17 @@
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Brain, Sparkles, ArrowRight, CheckCircle } from 'lucide-react';
+import { Brain, Sparkles, ArrowRight, CheckCircle, RefreshCw, Loader2 } from 'lucide-react';
 import type { ChannelMix } from '../utils/calculations';
 import { formatPercent } from '../utils/formatters';
 
 interface AIAssessmentProps {
   channelMix: ChannelMix;
+  metrics: {
+    impressions: number;
+    salesLow: number;
+    salesHigh: number;
+    roas: number;
+  };
   onApplySuggestions: (newMix: ChannelMix) => void;
 }
 
@@ -18,14 +25,16 @@ interface Optimization {
   expectedImpact: string;
 }
 
-function generateAssessment(channelMix: ChannelMix): {
+interface Assessment {
   rating: 'Optimal' | 'Strong' | 'Acceptable' | 'Needs Adjustment';
   stars: number;
   summary: string;
   optimizations: Optimization[];
   keyInsight: string;
-} {
-  // Calculate some metrics for assessment
+}
+
+// Fallback assessment when API fails
+function generateFallbackAssessment(channelMix: ChannelMix): Assessment {
   const retailAllocation = channelMix.retail || 0;
   const creatorsAllocation = channelMix.creators || 0;
   const tvAllocation = channelMix.tv || 0;
@@ -34,7 +43,6 @@ function generateAssessment(channelMix: ChannelMix): {
 
   const optimizations: Optimization[] = [];
 
-  // Check for optimization opportunities
   if (retailAllocation < 0.15 && creatorsAllocation > 0.10) {
     optimizations.push({
       priority: 'high',
@@ -71,8 +79,7 @@ function generateAssessment(channelMix: ChannelMix): {
     });
   }
 
-  // Determine rating
-  let rating: 'Optimal' | 'Strong' | 'Acceptable' | 'Needs Adjustment';
+  let rating: Assessment['rating'];
   let stars: number;
 
   if (optimizations.length === 0) {
@@ -89,7 +96,6 @@ function generateAssessment(channelMix: ChannelMix): {
     stars = 2;
   }
 
-  // Generate summary
   const summaryParts = [];
   if (bottomFunnel > 0.35) {
     summaryParts.push("Your conversion-focused allocation aligns well with the 'Real Reactions' strategy.");
@@ -114,15 +120,49 @@ function generateAssessment(channelMix: ChannelMix): {
   };
 }
 
-export function AIAssessment({ channelMix, onApplySuggestions }: AIAssessmentProps) {
-  const assessment = generateAssessment(channelMix);
+export function AIAssessment({ channelMix, metrics, onApplySuggestions }: AIAssessmentProps) {
+  const [assessment, setAssessment] = useState<Assessment | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [isAI, setIsAI] = useState(false);
+
+  const fetchAssessment = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/ai-assessment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ channelMix, metrics })
+      });
+
+      if (!response.ok) throw new Error('API error');
+
+      const data = await response.json();
+      if (data.fallback) throw new Error('Fallback requested');
+
+      setAssessment(data);
+      setIsAI(true);
+    } catch {
+      // Use fallback assessment
+      setAssessment(generateFallbackAssessment(channelMix));
+      setIsAI(false);
+    } finally {
+      setLoading(false);
+    }
+  }, [channelMix, metrics]);
+
+  // Initial load
+  useEffect(() => {
+    setAssessment(generateFallbackAssessment(channelMix));
+    setIsAI(false);
+  }, [channelMix]);
 
   const handleApplySuggestions = () => {
+    if (!assessment) return;
+
     const newMix = { ...channelMix };
     assessment.optimizations.forEach(opt => {
       const diff = opt.suggestedAllocation - opt.currentAllocation;
       newMix[opt.channel] = opt.suggestedAllocation;
-      // Redistribute the difference proportionally
       const otherChannels = Object.keys(newMix).filter(k => k !== opt.channel);
       const otherTotal = otherChannels.reduce((sum, k) => sum + newMix[k], 0);
       if (otherTotal > 0) {
@@ -141,22 +181,39 @@ export function AIAssessment({ channelMix, onApplySuggestions }: AIAssessmentPro
     'Needs Adjustment': 'text-red-600'
   };
 
+  if (!assessment) return null;
+
   return (
     <div className="card">
-      <div className="flex items-center gap-2 mb-4">
-        <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
-          <Brain className="w-4 h-4 text-purple-600" />
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
+            <Brain className="w-4 h-4 text-purple-600" />
+          </div>
+          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+            {isAI ? 'AI Strategy Assessment' : 'Strategy Assessment'}
+          </h3>
         </div>
-        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-          AI Strategy Assessment
-        </h3>
+        <button
+          onClick={fetchAssessment}
+          disabled={loading}
+          className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 disabled:opacity-50"
+          title="Get AI-powered assessment"
+        >
+          {loading ? (
+            <Loader2 className="w-3 h-3 animate-spin" />
+          ) : (
+            <RefreshCw className="w-3 h-3" />
+          )}
+          {loading ? 'Analyzing...' : 'Ask AI'}
+        </button>
       </div>
 
       {/* Rating */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <span className={`font-bold ${ratingColors[assessment.rating]}`}>
-            Assessment: {assessment.rating}
+            {assessment.rating}
           </span>
         </div>
         <div className="flex items-center gap-0.5">
@@ -205,7 +262,7 @@ export function AIAssessment({ channelMix, onApplySuggestions }: AIAssessmentPro
 
           <button
             onClick={handleApplySuggestions}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-primary-pink to-primary-cyan text-white rounded-lg font-medium text-sm hover:opacity-90 transition-opacity"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-primary-pink text-white rounded-lg font-medium text-sm hover:opacity-90 transition-opacity"
           >
             <CheckCircle className="w-4 h-4" />
             Apply Suggestions
