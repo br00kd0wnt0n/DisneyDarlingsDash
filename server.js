@@ -8,15 +8,15 @@ const PORT = process.env.PORT || 3000;
 // Middleware - must be before routes
 app.use(express.json());
 
-// Initialize OpenAI (only if API key exists)
+// Initialize OpenAI (check multiple common variable names)
 let openai = null;
-if (process.env.OPEN_AI_API) {
-  openai = new OpenAI({
-    apiKey: process.env.OPEN_AI_API
-  });
-  console.log('OpenAI initialized');
+const apiKey = process.env.OPENAI_API_KEY || process.env.OPEN_AI_API || process.env.OPENAI_KEY;
+
+if (apiKey) {
+  openai = new OpenAI({ apiKey });
+  console.log('OpenAI initialized with key:', apiKey.substring(0, 8) + '...');
 } else {
-  console.log('Warning: OPEN_AI_API not set');
+  console.log('Warning: No OpenAI API key found. Checked: OPENAI_API_KEY, OPEN_AI_API, OPENAI_KEY');
 }
 
 // Health check endpoint
@@ -24,6 +24,9 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
     openai: !!openai,
+    keySource: process.env.OPENAI_API_KEY ? 'OPENAI_API_KEY' :
+               process.env.OPEN_AI_API ? 'OPEN_AI_API' :
+               process.env.OPENAI_KEY ? 'OPENAI_KEY' : 'none',
     timestamp: new Date().toISOString()
   });
 });
