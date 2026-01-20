@@ -8,7 +8,6 @@ import {
   SalesFunnel,
   MarketCards,
   WaveTimeline,
-  CreatorROI,
   MetricsSidebar,
   ForecastModeToggle,
   AIAssessment,
@@ -103,8 +102,6 @@ function App() {
               onSelectWave={setSelectedWave}
             />
 
-            {/* Creator ROI */}
-            <CreatorROI />
 
             {/* Under the Hood */}
             {!state.isPresentationMode && (

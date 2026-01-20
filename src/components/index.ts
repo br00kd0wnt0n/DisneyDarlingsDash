@@ -4,7 +4,6 @@ export * from './ChannelMixControls';
 export * from './SalesFunnel';
 export * from './MarketCards';
 export * from './WaveTimeline';
-export * from './CreatorROI';
 export * from './MetricsSidebar';
 export * from './ForecastModeToggle';
 export * from './AIAssessment';
