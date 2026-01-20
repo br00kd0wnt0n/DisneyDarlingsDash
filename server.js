@@ -5,18 +5,44 @@ const OpenAI = require('openai');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// Middleware - must be before routes
 app.use(express.json());
 
-// Initialize OpenAI
-const openai = new OpenAI({
-  apiKey: process.env.OPEN_AI_API
+// Initialize OpenAI (only if API key exists)
+let openai = null;
+if (process.env.OPEN_AI_API) {
+  openai = new OpenAI({
+    apiKey: process.env.OPEN_AI_API
+  });
+  console.log('OpenAI initialized');
+} else {
+  console.log('Warning: OPEN_AI_API not set');
+}
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    openai: !!openai,
+    timestamp: new Date().toISOString()
+  });
 });
 
 // API endpoint for AI assessment
 app.post('/api/ai-assessment', async (req, res) => {
+  console.log('AI Assessment request received');
+
+  if (!openai) {
+    console.log('OpenAI not configured');
+    return res.status(500).json({
+      error: 'OpenAI not configured',
+      fallback: true
+    });
+  }
+
   try {
     const { channelMix, metrics } = req.body;
+    console.log('Channel mix:', channelMix);
 
     const systemPrompt = `You are an expert media strategist analyzing a channel mix for a Disney Darlings toy launch campaign in Europe (UK, Germany, France).
 
@@ -59,6 +85,7 @@ Provide your assessment as a JSON object with:
 
 Return ONLY valid JSON, no other text.`;
 
+    console.log('Calling OpenAI...');
     const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
@@ -70,6 +97,7 @@ Return ONLY valid JSON, no other text.`;
     });
 
     const content = response.choices[0].message.content;
+    console.log('OpenAI response received');
 
     // Parse JSON from response
     const jsonMatch = content.match(/\{[\s\S]*\}/);
@@ -80,9 +108,10 @@ Return ONLY valid JSON, no other text.`;
       throw new Error('Invalid JSON response from OpenAI');
     }
   } catch (error) {
-    console.error('AI Assessment error:', error);
+    console.error('AI Assessment error:', error.message);
     res.status(500).json({
       error: 'Failed to generate assessment',
+      message: error.message,
       fallback: true
     });
   }
@@ -91,7 +120,7 @@ Return ONLY valid JSON, no other text.`;
 // Serve static files from dist
 app.use(express.static(path.join(__dirname, 'dist')));
 
-// SPA fallback - serve index.html for all routes
+// SPA fallback - serve index.html for all non-API routes
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
