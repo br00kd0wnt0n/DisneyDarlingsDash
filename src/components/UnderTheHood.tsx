@@ -7,7 +7,6 @@ import { dataSourceLabels } from '../data/dataSources';
 import type { FunnelAssumptions } from '../data/funnelAssumptions';
 import { funnelStageLabels, funnelStageRanges } from '../data/funnelAssumptions';
 import { formatPercent, formatCurrency, formatMultiplier } from '../utils/formatters';
-import { SourceIndicator } from './Tooltip';
 
 interface UnderTheHoodProps {
   funnelAssumptions: FunnelAssumptions;
@@ -168,12 +167,9 @@ export function UnderTheHood({
                       <div key={key} className="space-y-1">
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-gray-700">{funnelStageLabels[key]}</span>
-                          <div className="flex items-center gap-2">
-                            <SourceIndicator field={key} />
-                            <span className="font-semibold text-text-dark">
-                              {formatPercent(value)}
-                            </span>
-                          </div>
+                          <span className="font-semibold text-text-dark">
+                            {formatPercent(value)}
+                          </span>
                         </div>
                         <input
                           type="range"
@@ -196,12 +192,9 @@ export function UnderTheHood({
                   <div className="space-y-1 pt-4 border-t border-gray-100">
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-700">{funnelStageLabels.q4Multiplier}</span>
-                      <div className="flex items-center gap-2">
-                        <SourceIndicator field="q4Multiplier" />
-                        <span className="font-semibold text-text-dark">
-                          {formatMultiplier(funnelAssumptions.q4Multiplier)}
-                        </span>
-                      </div>
+                      <span className="font-semibold text-text-dark">
+                        {formatMultiplier(funnelAssumptions.q4Multiplier)}
+                      </span>
                     </div>
                     <input
                       type="range"

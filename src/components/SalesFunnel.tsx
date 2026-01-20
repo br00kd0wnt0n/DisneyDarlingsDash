@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { ChevronDown, Sparkles, Eye, Heart, Target, ShoppingBag } from 'lucide-react';
 import { formatNumber, formatPercent } from '../utils/formatters';
-import { GlossaryTooltip, SourceIndicator } from './Tooltip';
+import { GlossaryTooltip } from './Tooltip';
 
 interface SalesFunnelProps {
   impressions: number;
@@ -82,7 +82,6 @@ export function SalesFunnel({
         <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
           Sales Funnel
         </h3>
-        <SourceIndicator field="impressionsToAwareness" showLabel />
       </div>
 
       <div className="space-y-2">

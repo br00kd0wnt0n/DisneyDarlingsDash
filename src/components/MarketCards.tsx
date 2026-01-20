@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { TrendingUp, Store } from 'lucide-react';
 import { formatCurrency, formatNumber, formatSalesRange } from '../utils/formatters';
-import { GlossaryTooltip, SourceIndicator } from './Tooltip';
+import { GlossaryTooltip } from './Tooltip';
 
 interface MarketMetric {
   id: string;
@@ -40,14 +40,9 @@ export function MarketCards({ markets }: MarketCardsProps) {
             className="p-4 rounded-xl bg-gradient-to-br from-gray-50 to-white border border-gray-100 hover:shadow-md transition-shadow"
           >
             {/* Header */}
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">{market.flag}</span>
-                <span className="font-semibold text-text-dark">{market.name}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <SourceIndicator field="brandAffinity" />
-              </div>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-2xl">{market.flag}</span>
+              <span className="font-semibold text-text-dark">{market.name}</span>
             </div>
 
             {/* Key Metrics */}

@@ -3,7 +3,7 @@ import { RotateCcw, AlertCircle, Tv, MonitorPlay, Youtube, Facebook, Music2, Map
 import { channels } from '../data/channels';
 import type { ChannelMix } from '../utils/calculations';
 import { formatPercent, formatCurrency } from '../utils/formatters';
-import { Tooltip, SourceIndicator } from './Tooltip';
+import { Tooltip } from './Tooltip';
 
 interface ChannelMixControlsProps {
   channelMix: ChannelMix;
@@ -108,7 +108,7 @@ export function ChannelMixControls({
                   onChange={(e) => onUpdateChannel(channel.id, parseFloat(e.target.value) / 100)}
                   className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer"
                   style={{
-                    background: `linear-gradient(to right, #E91E8C 0%, #00C0E8 ${allocation * 100}%, #e5e7eb ${allocation * 100}%, #e5e7eb 100%)`
+                    background: `linear-gradient(to right, #9ca3af 0%, #9ca3af ${allocation * 100}%, #e5e7eb ${allocation * 100}%, #e5e7eb 100%)`
                   }}
                 />
               </div>
@@ -117,7 +117,6 @@ export function ChannelMixControls({
               <div className="flex items-center gap-3 text-xs text-gray-400">
                 <span>CPM: ${channel.cpmTargeted}</span>
                 <span>Conv: {channel.conversionIndex}x</span>
-                <SourceIndicator field="conversionIndex" />
               </div>
             </div>
           );

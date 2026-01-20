@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Sparkles, TrendingUp, DollarSign, Target, BarChart3 } from 'lucide-react';
 import { formatCurrency, formatNumber, formatSalesRange, formatRevenueRange, formatROASRange, formatCostPerSaleRange } from '../utils/formatters';
-import { GlossaryTooltip, SourceIndicator } from './Tooltip';
+import { GlossaryTooltip } from './Tooltip';
 import type { DashboardMetrics } from '../hooks/useDashboardState';
 import type { BudgetTier } from '../data/budgetTiers';
 
@@ -17,10 +17,9 @@ interface MetricCardProps {
   icon: typeof Sparkles;
   color: string;
   glossaryTerm?: string;
-  sourceField?: string;
 }
 
-function MetricCard({ label, value, subValue, icon: Icon, color, glossaryTerm, sourceField }: MetricCardProps) {
+function MetricCard({ label, value, subValue, icon: Icon, color, glossaryTerm }: MetricCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
@@ -34,7 +33,6 @@ function MetricCard({ label, value, subValue, icon: Icon, color, glossaryTerm, s
         >
           <Icon className="w-4 h-4" style={{ color }} />
         </div>
-        {sourceField && <SourceIndicator field={sourceField} />}
       </div>
 
       <div className="space-y-1">
@@ -64,7 +62,6 @@ export function MetricsSidebar({ metrics, budgetTier }: MetricsSidebarProps) {
         subValue={`Media: ${formatCurrency(budgetTier.mediaSpend, { compact: true })}`}
         icon={DollarSign}
         color="#E91E8C"
-        sourceField="totalBudget"
       />
 
       {/* Impressions */}
@@ -73,20 +70,19 @@ export function MetricsSidebar({ metrics, budgetTier }: MetricsSidebarProps) {
         value={formatNumber(metrics.impressions, { compact: true })}
         subValue={`Blended CPM: ${formatCurrency(metrics.blendedCPM, { decimals: 2 })}`}
         icon={BarChart3}
-        color="#00C0E8"
+        color="#6b7280"
         glossaryTerm="Impressions"
-        sourceField="cpmTargeted"
       />
 
       {/* Sales Projection */}
       <motion.div
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
-        className="p-4 rounded-xl bg-gradient-to-br from-pink-50 to-cyan-50 border-2 border-primary-pink"
+        className="p-4 rounded-xl bg-pink-50 border border-pink-200"
       >
         <div className="flex items-start justify-between mb-2">
           <div className="w-8 h-8 rounded-lg bg-primary-pink/20 flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-primary-pink sparkle" />
+            <Sparkles className="w-4 h-4 text-primary-pink" />
           </div>
         </div>
         <p className="text-xs text-gray-500 uppercase tracking-wide">Projected Sales</p>
@@ -94,16 +90,6 @@ export function MetricsSidebar({ metrics, budgetTier }: MetricsSidebarProps) {
           {formatSalesRange(metrics.displaySales)}
         </p>
         <p className="text-xs text-gray-500 mt-1">units</p>
-
-        {/* Visual range bar */}
-        <div className="mt-3 h-2 bg-gray-200 rounded-full overflow-hidden">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: '75%' }}
-            transition={{ duration: 0.5 }}
-            className="h-full bg-gradient-to-r from-primary-pink to-primary-cyan rounded-full"
-          />
-        </div>
       </motion.div>
 
       {/* Revenue */}
