@@ -91,7 +91,7 @@ export function MetricsSidebar({ metrics, budgetTier }: MetricsSidebarProps) {
         </div>
         <p className="text-xs text-gray-500 uppercase tracking-wide">Projected Sales</p>
         <p className="text-2xl font-bold text-primary-pink count-up">
-          {formatSalesRange(metrics.sales)}
+          {formatSalesRange(metrics.displaySales)}
         </p>
         <p className="text-xs text-gray-500 mt-1">units</p>
 
@@ -109,7 +109,7 @@ export function MetricsSidebar({ metrics, budgetTier }: MetricsSidebarProps) {
       {/* Revenue */}
       <MetricCard
         label="Revenue Projection"
-        value={formatRevenueRange(metrics.revenue)}
+        value={formatRevenueRange(metrics.displayRevenue)}
         icon={TrendingUp}
         color="#22c55e"
       />
@@ -117,7 +117,7 @@ export function MetricsSidebar({ metrics, budgetTier }: MetricsSidebarProps) {
       {/* ROAS */}
       <MetricCard
         label="Target ROAS"
-        value={formatROASRange(metrics.roas)}
+        value={formatROASRange(metrics.displayRoas)}
         icon={Target}
         color="#FFD700"
         glossaryTerm="ROAS"
@@ -126,7 +126,7 @@ export function MetricsSidebar({ metrics, budgetTier }: MetricsSidebarProps) {
       {/* Cost Per Sale */}
       <MetricCard
         label="Cost Per Sale"
-        value={formatCostPerSaleRange(metrics.costPerSale)}
+        value={formatCostPerSaleRange(metrics.displayCostPerSale)}
         icon={DollarSign}
         color="#a855f7"
       />

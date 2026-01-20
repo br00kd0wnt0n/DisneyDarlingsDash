@@ -37,6 +37,11 @@ export interface DashboardMetrics {
   revenue: { low: number; high: number; mid: number };
   roas: { low: number; high: number; mid: number };
   costPerSale: { low: number; high: number; mid: number };
+  // Mode-adjusted display values
+  displaySales: { low: number; high: number; mid: number };
+  displayRevenue: { low: number; high: number; mid: number };
+  displayRoas: { low: number; high: number; mid: number };
+  displayCostPerSale: { low: number; high: number; mid: number };
   blendedCPM: number;
   channelMixValid: boolean;
   channelMixTotal: number;
@@ -143,7 +148,7 @@ export function useDashboardState() {
 
   // Calculate derived metrics
   const metrics = useMemo((): DashboardMetrics => {
-    const { selectedTier, channelMix, funnelAssumptions, targetingMode, selectedWave } = state;
+    const { selectedTier, channelMix, funnelAssumptions, targetingMode, selectedWave, forecastMode } = state;
 
     const isHoliday = selectedWave === 'wave2' || selectedWave === 'all';
 
@@ -174,6 +179,36 @@ export function useDashboardState() {
       isHoliday
     );
 
+    // Calculate mode-adjusted display values
+    // Conservative: show lower range, Moderate: show mid range, Aggressive: show higher range
+    const modeRangeAdjust = {
+      conservative: { lowMult: 0.85, highMult: 0.95 },
+      moderate: { lowMult: 0.92, highMult: 1.08 },
+      aggressive: { lowMult: 1.05, highMult: 1.20 }
+    };
+    const adjust = modeRangeAdjust[forecastMode];
+
+    const displaySales = {
+      low: Math.floor(funnelStages.sales.mid * adjust.lowMult),
+      high: Math.ceil(funnelStages.sales.mid * adjust.highMult),
+      mid: Math.floor(funnelStages.sales.mid * (adjust.lowMult + adjust.highMult) / 2)
+    };
+    const displayRevenue = {
+      low: displaySales.low * 60.25, // weighted avg price
+      high: displaySales.high * 60.25,
+      mid: displaySales.mid * 60.25
+    };
+    const displayRoas = {
+      low: displayRevenue.low / selectedTier.totalBudget,
+      high: displayRevenue.high / selectedTier.totalBudget,
+      mid: displayRevenue.mid / selectedTier.totalBudget
+    };
+    const displayCostPerSale = {
+      low: selectedTier.totalBudget / displaySales.high,
+      high: selectedTier.totalBudget / displaySales.low,
+      mid: selectedTier.totalBudget / displaySales.mid
+    };
+
     return {
       impressions,
       awareness: funnelStages.awareness,
@@ -183,6 +218,10 @@ export function useDashboardState() {
       revenue,
       roas,
       costPerSale,
+      displaySales,
+      displayRevenue,
+      displayRoas,
+      displayCostPerSale,
       blendedCPM,
       channelMixValid: validation.isValid,
       channelMixTotal: validation.total,

@@ -91,7 +91,7 @@ function App() {
               awareness={metrics.awareness}
               consideration={metrics.consideration}
               intent={metrics.intent}
-              sales={metrics.sales}
+              sales={metrics.displaySales}
             />
 
             {/* Market Cards */}
