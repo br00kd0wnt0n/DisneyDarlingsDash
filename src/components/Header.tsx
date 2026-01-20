@@ -1,4 +1,4 @@
-import { Sparkles, Monitor, Layers } from 'lucide-react';
+import { Monitor, Layers } from 'lucide-react';
 
 interface HeaderProps {
   isPresentationMode: boolean;
@@ -17,23 +17,17 @@ export function Header({
     <header className="bg-white shadow-sm border-b border-gray-100">
       <div className="max-w-[1800px] mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          {/* Logo/Brand */}
+          {/* Logo */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-pink to-primary-cyan flex items-center justify-center">
-              <Sparkles className="w-6 h-6 text-white" />
+            <img
+              src="/darlings_Logo.png"
+              alt="Disney Darlings"
+              className="h-12 w-auto"
+            />
+            <div className="border-l border-gray-200 pl-3">
+              <p className="text-sm font-medium text-gray-600">Sales Forecast</p>
+              <p className="text-xs text-gray-400">EMEA Launch 2026</p>
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-text-dark flex items-center gap-2">
-                Disney Darlings
-                <span className="text-primary-pink">✦</span>
-              </h1>
-              <p className="text-xs text-gray-500">Sales Forecast Dashboard</p>
-            </div>
-          </div>
-
-          {/* Campaign Badge */}
-          <div className="hidden md:flex items-center gap-2 bg-background-light-blue px-3 py-1.5 rounded-full">
-            <span className="text-xs font-medium text-primary-cyan">EMEA Launch 2026</span>
           </div>
         </div>
 

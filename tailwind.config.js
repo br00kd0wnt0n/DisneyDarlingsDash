@@ -7,16 +7,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        'primary-pink': '#E91E8C',
-        'primary-cyan': '#00C0E8',
-        'accent-yellow': '#FFD700',
-        'background-cream': '#FFF8E7',
+        'primary-pink': '#E88BAD',
+        'primary-cyan': '#6DD3E3',
+        'accent-yellow': '#F7D65A',
+        'accent-coral': '#F5A3B7',
+        'background-cream': '#FFF8F0',
         'background-light-blue': '#E8F6FA',
+        'background-light-pink': '#FFF0F5',
         'text-dark': '#333333',
-        'text-pink': '#D81B7A',
-        'source-client': '#22c55e',
-        'source-industry': '#3b82f6',
-        'source-ralph': '#a855f7',
+        'text-pink': '#D97B9C',
       },
       fontFamily: {
         'rounded': ['system-ui', '-apple-system', 'SF Pro Rounded', 'Nunito', 'sans-serif'],
