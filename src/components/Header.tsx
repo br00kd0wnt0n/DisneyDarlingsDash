@@ -59,8 +59,12 @@ export function Header({
           </button>
 
           {/* Ralph Branding */}
-          <div className="flex items-center gap-2 text-gray-400 text-sm border-l pl-3 ml-2">
-            <span className="font-medium">ralph</span>
+          <div className="border-l pl-3 ml-2">
+            <img
+              src="/ralph_logo.png"
+              alt="ralph"
+              className="h-6 w-auto"
+            />
           </div>
         </div>
       </div>
