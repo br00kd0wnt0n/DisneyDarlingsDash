@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
 import type { ForecastMode } from '../utils/calculations';
 import { forecastModeLabels } from '../utils/calculations';
-import { Tooltip } from './Tooltip';
 
 interface ForecastModeToggleProps {
   mode: ForecastMode;
@@ -23,23 +22,22 @@ export function ForecastModeToggle({ mode, onModeChange }: ForecastModeTogglePro
           const modeInfo = forecastModeLabels[m];
 
           return (
-            <Tooltip key={m} content={modeInfo.description} position="bottom">
-              <button
-                onClick={() => onModeChange(m)}
-                className={`relative flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                  isActive ? 'text-white' : 'text-gray-600 hover:text-gray-800'
-                }`}
-              >
-                {isActive && (
-                  <motion.div
-                    layoutId="forecastMode"
-                    className="absolute inset-0 bg-gradient-to-r from-primary-pink to-primary-cyan rounded-md"
-                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                  />
-                )}
-                <span className="relative z-10">{modeInfo.label}</span>
-              </button>
-            </Tooltip>
+            <button
+              key={m}
+              onClick={() => onModeChange(m)}
+              className={`relative flex-1 px-2 py-2 text-xs font-medium rounded-md transition-colors ${
+                isActive ? 'text-white' : 'text-gray-600 hover:text-gray-800'
+              }`}
+            >
+              {isActive && (
+                <motion.div
+                  layoutId="forecastMode"
+                  className="absolute inset-0 bg-gradient-to-r from-primary-pink to-primary-cyan rounded-md"
+                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                />
+              )}
+              <span className="relative z-10">{modeInfo.label}</span>
+            </button>
           );
         })}
       </div>
